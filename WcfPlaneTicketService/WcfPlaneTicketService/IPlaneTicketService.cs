@@ -28,12 +28,12 @@ namespace WcfPlaneTicketService
         List<Route> getFullUserFlightsInfo(string userId); // with time and price      
 
         [OperationContract]  
-        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/flights/{routeId}")]
-        void addFlight(string userId, string routeId, Route route);
+        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}")]
+        Route addFlight(string userId, Route route);
 
         [OperationContract] 
-        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}/{routeId}")]
-        Route updateFlight(string userId, string routeId, Route route);
+        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}")]
+        Route updateFlight(string userId,  Route route);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}")]

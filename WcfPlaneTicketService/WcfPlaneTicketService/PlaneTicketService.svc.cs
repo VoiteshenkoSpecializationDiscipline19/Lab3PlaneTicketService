@@ -36,12 +36,14 @@ namespace WcfPlaneTicketService
             return resRoutes;
         }
 
-        public void addFlight(string userId, string routeId, Route route)
+        public Route addFlight(string userId, Route route)
         {
-
+            //find by date, from/where
+           // route.time=; route.price=
+            return route;
         }
 
-        public Route updateFlight(string userId, string routeId, Route route)
+        public Route updateFlight(string userId, Route route)
         {
             Route updatedRoute = new Route();
             //
