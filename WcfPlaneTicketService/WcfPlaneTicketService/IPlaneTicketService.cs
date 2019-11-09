@@ -19,14 +19,6 @@ namespace WcfPlaneTicketService
             ResponseFormat = WebMessageFormat.Json)]
         User getUser(string userId); // userId = Email
 
-        [OperationContract]
-        [WebInvoke(
-            Method = "GET",
-            UriTemplate = "/flights/{userId}",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]        
-        List<Route> getUserFlightsInfo(string userId); // without time and price 
-
         [OperationContract]  
         [WebInvoke(
             Method = "GET",
@@ -35,17 +27,17 @@ namespace WcfPlaneTicketService
             ResponseFormat = WebMessageFormat.Json)]       
         List<Route> getFullUserFlightsInfo(string userId); // with time and price      
 
-        [OperationContract]  //?? что из клиента получаю? parameters - from + where + date + time + price ??
-        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/{parameters}")]
-        void addFlight(string userId, string parameters);
+        [OperationContract]  
+        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/flights/{routeId}")]
+        void addFlight(string userId, string routeId, Route route);
 
-        [OperationContract]  //?? что из клиента получаю? parameters - from + where + date + time + price ??
-        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}/{userFlightId}/{parameters}")]
-        void updateFlight(string userId, string userFlightId, string parameters);
+        [OperationContract] 
+        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}/{routeId}")]
+        Route updateFlight(string userId, string routeId, Route route);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{userFlightId}")]
-        void deleteFlight(string userId, string userFlightId);
+        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}")]
+        void deleteFlight(string userId, string routeId);
 
         void setToken(string methodName, string tokenValue);
         // methods which gets payment token

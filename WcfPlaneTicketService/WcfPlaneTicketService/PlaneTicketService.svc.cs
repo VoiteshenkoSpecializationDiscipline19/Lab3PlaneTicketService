@@ -19,7 +19,7 @@ namespace WcfPlaneTicketService
             return user;
         }
 
-        public List<Route> getUserFlightsInfo(string userId)
+        public List<Route> getFullUserFlightsInfo(string userId)
         {
             List<Route> resRoutes = new List<Route>();
             // by userId from UserFlight get routeId, for each routeId from Route get info(without date and price)
@@ -30,30 +30,25 @@ namespace WcfPlaneTicketService
             route.routeFrom = "Minsk";
             route.routeWhere = "London";
             route.routeDate = "01.01.2020";
-            //route.routeTime = "00:00";
-            //route.routePrice = "30";
+            route.routeTime = "00:00";
+            route.routePrice = "30";
             resRoutes.Add(route);
             return resRoutes;
         }
 
-        public List<Route> getFullUserFlightsInfo(string userId)
-        {
-            List<Route> resRoutes = new List<Route>();
-            // by userId from UserFlight get routeId, for each routeId from Route get info(with date and price)
-            return resRoutes;
-        }
-
-        public void addFlight(string userId, string parameters)
+        public void addFlight(string userId, string routeId, Route route)
         {
 
         }
 
-        public void updateFlight(string userId, string userFlightId, string parameters)
+        public Route updateFlight(string userId, string routeId, Route route)
         {
-
+            Route updatedRoute = new Route();
+            //
+            return updatedRoute;
         }
 
-        public void deleteFlight(string userId, string userFlightId)
+        public void deleteFlight(string userId, string routeId)
         {
 
         }
