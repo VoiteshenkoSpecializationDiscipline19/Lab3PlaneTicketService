@@ -9,6 +9,16 @@ namespace WcfPlaneTicketService
 {
     public class PlaneTicketService : IPlaneTicketService
     {
+        public User getUser(string userId)
+        {
+            User user = new User();
+            // get user from db by userId
+            user.userId = "user1@gmail.com";
+            user.userFirstName = "user1";
+            user.userSecondName = "user1";
+            return user;
+        }
+
         public List<Route> getUserFlightsInfo(string userId)
         {
             List<Route> resRoutes = new List<Route>();
@@ -46,6 +56,16 @@ namespace WcfPlaneTicketService
         public void deleteFlight(string userId, string userFlightId)
         {
 
+        }
+
+        public List<Token> tokens = new List<Token>();
+
+        public void setToken(string _methodName, string _tokenValue)
+        {
+            Token tempToken = new Token();
+            tempToken.methodName = _methodName;
+            tempToken.tokenValue = _tokenValue;
+            tokens.Add(tempToken);
         }
     }
 }
