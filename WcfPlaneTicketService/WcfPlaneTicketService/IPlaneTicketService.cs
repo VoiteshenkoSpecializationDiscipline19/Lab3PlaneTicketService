@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
 using System.Text;
+using MySql.Data.MySqlClient;
 
 namespace WcfPlaneTicketService
 {
@@ -14,30 +15,36 @@ namespace WcfPlaneTicketService
         [OperationContract]
         [WebInvoke(
             Method = "GET",
-            UriTemplate = "/{userId}",
+            UriTemplate = "/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        User getUser(string userId); // userId = Email
+        User getUser(string userId, string tokenValue); // userId = Email
 
         [OperationContract]  
         [WebInvoke(
             Method = "GET",
-            UriTemplate = "/flights/{userId}/details",
+            UriTemplate = "/flights/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]       
-        List<Route> getFullUserFlightsInfo(string userId); // with time and price      
+        List<Route> getFullUserFlightsInfo(string userId, string tokenValue); // with time and price      
 
         [OperationContract]  
-        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}")]
-        Route addFlight(string userId, Route route);
+        [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/{tokenValue}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        Route addFlight(string userId, Route route, string tokenValue);
 
         [OperationContract] 
-        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}")]
-        Route updateFlight(string userId,  Route route);
+        [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}/{tokenValue}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        Route updateFlight(string userId,  Route route, string tokenValue);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}")]
-        void deleteFlight(string userId, string routeId);
+        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}/{tokenValue}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        void deleteFlight(string userId, string routeId, string tokenValue);
 
         void setToken(string methodName, string tokenValue);
         // methods which gets payment token
@@ -80,8 +87,6 @@ namespace WcfPlaneTicketService
     {
         [DataMember]
         public string userId { get; set; }   // Email = Id
-        //[DataMember]
-        //public string userEmail { get; set; }
         [DataMember]
         public string userFirstName { get; set; }
         [DataMember]
