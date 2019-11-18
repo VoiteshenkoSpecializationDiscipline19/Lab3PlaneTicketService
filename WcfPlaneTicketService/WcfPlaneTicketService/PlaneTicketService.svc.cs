@@ -5,7 +5,6 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
-//using MySql.Data.MySqlClient;
 
 namespace WcfPlaneTicketService
 {
@@ -13,189 +12,215 @@ namespace WcfPlaneTicketService
     {
         private const string connStr = "server=remotemysql.com;Port=3306;Database=onWm52J7I5;Uid=onWm52J7I5;Pwd=TWgylKHgPf";
         private MySqlConnection conn = new MySqlConnection(connStr);
+        public Dictionary<string, Token> tokens = new Dictionary<string, Token>();
 
         public User getUser(string userId, string tokenValue)
         {
-            // check token 
-
             User user = new User();
+            //string tokVal = tokens["getUser"].tokenValue;
+            string tokVal = "token1234";
 
-            try
+            if (tokVal.Equals(tokenValue))
             {
-                conn.Open();
+                try
+                {
+                        conn.Open();
 
-                string sql = "SELECT * FROM User WHERE userId='" + userId + "';"; 
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read();
+                        string sql = "SELECT * FROM User WHERE userId='" + userId + "';";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        rdr.Read();
 
-                user.userId = rdr[0].ToString();
-                user.userFirstName = rdr[1].ToString();
-                user.userSecondName = rdr[2].ToString();
+                        user.userId = rdr[0].ToString();
+                        user.userFirstName = rdr[1].ToString();
+                        user.userSecondName = rdr[2].ToString();
 
-                rdr.Close();
+                        rdr.Close();
+                }
+                catch (Exception ex)
+                { }
+
+                conn.Close();
             }
-            catch (Exception ex)
-            {}
 
-            conn.Close();
             return user;
         }
 
         public List<Route> getFullUserFlightsInfo(string userId, string tokenValue)
         {
-            // check token 
-
             List<Route> resRoutes = new List<Route>();
-            // by userId from UserFlight get routeId, for each routeId from Route get info(without date and price)
+            //string tokVal = tokens["getFullUserFlightsInfo"].tokenValue;
+            string tokVal = "token1234";
 
-            try
+            if (tokVal.Equals(tokenValue))
             {
-                conn.Open();
-
-                string sql = "SELECT userFlightRouteId FROM UserFlight WHERE userFlightUserId='" + userId + "';";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-
-                while (rdr.Read())
-                {
-                    Route route = new Route();
-                    route.routeId = rdr[0].ToString();
-                    resRoutes.Add(route);
-                }
-                rdr.Close();
-
-                foreach (Route rt in resRoutes)
-                {
-                    sql = "SELECT * FROM Route WHERE routeId='" + rt.routeId + "';";
-                    cmd = new MySqlCommand(sql, conn);
-                    rdr = cmd.ExecuteReader();
-
-                    while (rdr.Read())
+                try
                     {
-                        rt.routeFrom = rdr[1].ToString();
-                        rt.routeWhere = rdr[2].ToString();
-                        rt.routeDate = rdr[3].ToString();
-                        rt.routeTime = rdr[4].ToString();
-                        rt.routePrice = rdr[5].ToString();
+                        conn.Open();
+
+                        string sql = "SELECT userFlightRouteId FROM UserFlight WHERE userFlightUserId='" + userId + "';";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+
+                        while (rdr.Read())
+                        {
+                            Route route = new Route();
+                            route.routeId = rdr[0].ToString();
+                            resRoutes.Add(route);
+                        }
+                        rdr.Close();
+
+                        foreach (Route rt in resRoutes)
+                        {
+                            sql = "SELECT * FROM Route WHERE routeId='" + rt.routeId + "';";
+                            cmd = new MySqlCommand(sql, conn);
+                            rdr = cmd.ExecuteReader();
+
+                            while (rdr.Read())
+                            {
+                                rt.routeFrom = rdr[1].ToString();
+                                rt.routeWhere = rdr[2].ToString();
+                                rt.routeDate = rdr[3].ToString();
+                                rt.routeTime = rdr[4].ToString();
+                                rt.routePrice = rdr[5].ToString();
+
+                            }
+                            rdr.Close();
+                        }
+
 
                     }
-                    rdr.Close();
+                    catch (Exception ex)
+                    { }
+
+                    conn.Close();
                 }
-
-                
-            }
-            catch (Exception ex)
-            { }
-           
-            conn.Close();
-
             return resRoutes;
         }
 
         public Route addFlight(string userId, Route route, string tokenValue)
         {
-            // check token 
+            //string tokVal = tokens["addFlight"].tokenValue;
+            string tokVal = "token1234";
 
-            try
+            if (tokVal.Equals(tokenValue))
             {
-                conn.Open();
 
-                string sql = "SELECT routeId FROM Route WHERE routeFrom='" + route.routeFrom +
-                    "' AND routeWhere='" + route.routeWhere +
-                    "' AND routeDate='" + route.routeDate +
-                    "' AND routeTime='" + route.routeTime +
-                    "' AND routePrice='" + route.routePrice;
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read();
-                string routeId = rdr[0].ToString();
-                rdr.Close();
+                try
+                    {
+                        conn.Open();
+                        string sql = "SELECT routeId, routeTime, routePrice FROM Route WHERE routeFrom='" + route.routeFrom +
+                            "' AND routeWhere='" + route.routeWhere +
+                            "' AND routeDate='" + route.routeDate + "';";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
 
-                sql = "INSERT INTO UserFlight(userFlightRouteId, userFlightUserId) VALUES('" +
-                    routeId + "','" + userId + "');";
-                cmd = new MySqlCommand(sql, conn);
-                rdr = cmd.ExecuteReader();
-                rdr.Read();
 
-                route.routeId = routeId;
+                        string routeId = "", routeTime = "", routePrice = "";
 
-                rdr.Close();
-            }
-            catch (Exception ex)
-            { }
+                        rdr.Read();
 
-            conn.Close();
+                        routeId = rdr[0].ToString();
+                        routeTime = rdr[1].ToString();
+                        routePrice = rdr[2].ToString();
+                        rdr.Close();
+
+                        sql = "INSERT INTO UserFlight(userFlightRouteId, userFlightUserId) VALUES('" +
+                            routeId + "','" + userId + "');";
+                        cmd = new MySqlCommand(sql, conn);
+                        cmd.ExecuteNonQuery();
+
+                        route.routeId = routeId;
+                        route.routeTime = routeTime;
+                        route.routePrice = routePrice;
+
+                    }
+                    catch (Exception ex)
+                    { }
+
+                    conn.Close();
+                }
+
             return route;
         }
 
         public Route updateFlight(string userId, Route route, string tokenValue)
         {
-            // check token 
+            //string tokVal = tokens["updateFlight"].tokenValue;
+            string tokVal = "token1234";
 
-            try
+            if (tokVal.Equals(tokenValue))
             {
-                conn.Open();
+                try
+                    {
+                        conn.Open();
 
-                string sql = "SELECT routeId FROM Route WHERE routeFrom='" + route.routeFrom +
-                    "' AND routeWhere='" + route.routeWhere +
-                    "' AND routeDate='" + route.routeDate +
-                    "' AND routeTime='" + route.routeTime +
-                    "' AND routePrice='" + route.routePrice;
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read();
-                string routeId = rdr[0].ToString();
-                rdr.Close();
+                        string sql = "SELECT routeId, routeTime, routePrice FROM Route WHERE routeFrom='" + route.routeFrom +
+                        "' AND routeWhere='" + route.routeWhere +
+                        "' AND routeDate='" + route.routeDate + "';";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        string routeId = "", routeTime = "", routePrice = "";
 
-                sql = "UPDATE UserFlight SET userFlightRouteId='" +
-                    routeId + "' WHERE userFlightUserId='" + userId + "');";
+                        rdr.Read();
 
-                cmd = new MySqlCommand(sql, conn);
-                rdr = cmd.ExecuteReader();
-                rdr.Read();
+                        routeId = rdr[0].ToString();
+                        routeTime = rdr[1].ToString();
+                        routePrice = rdr[2].ToString();
+                        rdr.Close();
 
-                route.routeId = routeId;
+                        sql = "UPDATE UserFlight SET userFlightRouteId='" +
+                            routeId + "' WHERE userFlightUserId='" + userId + "';";
 
-                rdr.Close();
-            }
-            catch (Exception ex)
-            { }
+                        cmd = new MySqlCommand(sql, conn);
+                        cmd.ExecuteNonQuery();
 
-            conn.Close();
+                        route.routeId = routeId;
+                        route.routeTime = routeTime;
+                        route.routePrice = routePrice;
+
+                    }
+                    catch (Exception ex)
+                    { }
+
+
+                    conn.Close();
+                }
+
             return route;
         }
 
-        public void deleteFlight(string userId, string routeId, string tokenValue)
+        public int deleteFlight(string userId, string routeId, string tokenValue)
         {
-            // check token 
+            int successCode = -1;
+            //string tokVal = tokens["deleteFlight"].tokenValue;
+            string tokVal = "token1234";
 
-            try
+            if (tokVal.Equals(tokenValue))
             {
-                conn.Open();
 
-                string sql = "DELETE FROM UserFlight WHERE userFlightRouteId='" + routeId 
-                    + "' AND userFlightUserId='" + userId + "');";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                rdr.Read();
+                try
+                    {
+                        conn.Open();
+                        string sql = "DELETE FROM UserFlight WHERE userFlightRouteId='" + routeId
+                            + "' AND userFlightUserId='" + userId + "';";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        cmd.ExecuteNonQuery();
+                }
+                catch (Exception ex)
+                { }
 
-                rdr.Close();
+                conn.Close();
+                successCode = 0;
             }
-            catch (Exception ex)
-            { }
 
-            conn.Close();
+            return successCode;
         }
 
-        public List<Token> tokens = new List<Token>();
-
-        public void setToken(string _methodName, string _tokenValue)
-        {
-            Token tempToken = new Token();
-            tempToken.methodName = _methodName;
-            tempToken.tokenValue = _tokenValue;
-            tokens.Add(tempToken);
+        public void setToken(string method, Token token)
+        {           
+            tokens[method] = token;
+            //return tokens[method].tokenValue + " " + method;
         }
     }
 }
