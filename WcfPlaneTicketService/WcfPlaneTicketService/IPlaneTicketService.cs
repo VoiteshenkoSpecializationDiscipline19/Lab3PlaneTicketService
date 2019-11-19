@@ -44,16 +44,24 @@ namespace WcfPlaneTicketService
         [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        void deleteFlight(string userId, string routeId, string tokenValue);
+        int deleteFlight(string userId, string routeId, string tokenValue);
 
-        void setToken(string methodName, string tokenValue);
-        // methods which gets payment token
+        [OperationContract]
+        [WebInvoke(Method = "POST", UriTemplate = "/setToken/{method}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        void setToken(string method, Token token);
     }
 
+    [DataContract]
     public class Token
     {
-        public string methodName { get; set; }
+        [DataMember]
         public string tokenValue { get; set; }
+        [DataMember]
+        public string date_from { get; set; }
+        [DataMember]
+        public string date_to { get; set; }
     }
 
     [DataContract]
