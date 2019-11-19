@@ -268,7 +268,7 @@ namespace WcfPlaneTicketService
             {
                 conn.Open();
                 string sql = "UPDATE Token SET tokenValue='" +
-                            token.tokenValue + "' WHERE methodName='" + method + "';";
+                            token.token + "' WHERE methodName='" + method + "';";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
 

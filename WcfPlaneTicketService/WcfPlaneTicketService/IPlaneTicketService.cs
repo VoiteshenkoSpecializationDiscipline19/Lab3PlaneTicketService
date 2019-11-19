@@ -64,7 +64,7 @@ namespace WcfPlaneTicketService
     public class Token
     {
         [DataMember]
-        public string tokenValue { get; set; }
+        public string token { get; set; }
         [DataMember]
         public string date_from { get; set; }
         [DataMember]
