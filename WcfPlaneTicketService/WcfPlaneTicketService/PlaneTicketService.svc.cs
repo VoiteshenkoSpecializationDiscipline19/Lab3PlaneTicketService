@@ -233,6 +233,15 @@ namespace WcfPlaneTicketService
                             token.tokenValue + "' WHERE methodName='" + method + "';";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
+
+                sql = "UPDATE Token SET dateFrom='" +
+                            token.date_from + "' WHERE methodName='" + method + "';";
+                cmd = new MySqlCommand(sql, conn);
+                cmd.ExecuteNonQuery();
+                sql = "UPDATE Token SET dateTo='" +
+                            token.date_to + "' WHERE methodName='" + method + "';";
+                cmd = new MySqlCommand(sql, conn);
+                cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             { }
@@ -242,15 +251,31 @@ namespace WcfPlaneTicketService
 
         private string getToken(string methodName)
         {
-            string token = "";
+            string token = "", dateFrom = "", dateTo = "";
             try
             {
                 conn.Open();
-                string sql_tok = "SELECT tokenValue FROM Token WHERE methodName='" + methodName + "';";
-                MySqlCommand cmd_tok = new MySqlCommand(sql_tok, conn);
-                MySqlDataReader rdr_tok = cmd_tok.ExecuteReader();
+                string sql_tok = "";
+                MySqlCommand cmd_tok;
+                MySqlDataReader rdr_tok;
+             
+                sql_tok = "SELECT tokenValue, dateFrom, dateTo FROM Token WHERE methodName='" + methodName + "';";
+                cmd_tok = new MySqlCommand(sql_tok, conn);
+                rdr_tok = cmd_tok.ExecuteReader();
                 rdr_tok.Read();
-                token = rdr_tok[0].ToString();
+                
+                dateFrom = rdr_tok[1].ToString();
+                dateTo = rdr_tok[2].ToString();
+                
+                DateTime currentDate = DateTime.Now;
+                string dateString = currentDate.ToString("d");
+                currentDate = Convert.ToDateTime(dateString);
+                DateTime dateFromDate = Convert.ToDateTime(dateFrom);
+                DateTime dateToDate = Convert.ToDateTime(dateTo);
+
+                if (currentDate >= dateFromDate && currentDate <= dateToDate)
+                    token = rdr_tok[0].ToString();
+
                 rdr_tok.Close();
             }
             catch (Exception ex)
