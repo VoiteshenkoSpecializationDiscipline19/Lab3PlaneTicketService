@@ -12,13 +12,13 @@ namespace WcfPlaneTicketService
     {
         private const string connStr = "server=remotemysql.com;Port=3306;Database=onWm52J7I5;Uid=onWm52J7I5;Pwd=TWgylKHgPf";
         private MySqlConnection conn = new MySqlConnection(connStr);
-        public Dictionary<string, Token> tokens = new Dictionary<string, Token>();
 
         public User getUser(string userId, string tokenValue)
         {
             User user = new User();
-            //string tokVal = tokens["getUser"].tokenValue;
-            string tokVal = "token1234";
+
+            string methodName = "getUser";
+            string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -42,6 +42,7 @@ namespace WcfPlaneTicketService
 
                 conn.Close();
             }
+            
 
             return user;
         }
@@ -49,8 +50,9 @@ namespace WcfPlaneTicketService
         public List<Route> getFullUserFlightsInfo(string userId, string tokenValue)
         {
             List<Route> resRoutes = new List<Route>();
-            //string tokVal = tokens["getFullUserFlightsInfo"].tokenValue;
-            string tokVal = "token1234";
+
+            string methodName = "getUser";
+            string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -100,8 +102,9 @@ namespace WcfPlaneTicketService
 
         public Route addFlight(string userId, Route route, string tokenValue)
         {
-            //string tokVal = tokens["addFlight"].tokenValue;
-            string tokVal = "token1234";
+
+            string methodName = "getUser";
+            string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -146,8 +149,9 @@ namespace WcfPlaneTicketService
 
         public Route updateFlight(string userId, Route route, string tokenValue)
         {
-            //string tokVal = tokens["updateFlight"].tokenValue;
-            string tokVal = "token1234";
+
+            string methodName = "getUser";
+            string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -194,7 +198,10 @@ namespace WcfPlaneTicketService
         {
             int successCode = -1;
             //string tokVal = tokens["deleteFlight"].tokenValue;
-            string tokVal = "token1234";
+            //string tokVal = "token1234";
+
+            string methodName = "getUser";
+            string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -218,9 +225,39 @@ namespace WcfPlaneTicketService
         }
 
         public void setToken(string method, Token token)
-        {           
-            tokens[method] = token;
-            //return tokens[method].tokenValue + " " + method;
+        {
+            try
+            {
+                conn.Open();
+                string sql = "UPDATE Token SET tokenValue='" +
+                            token.tokenValue + "' WHERE methodName='" + method + "';";
+                MySqlCommand cmd = new MySqlCommand(sql, conn);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            { }
+
+            conn.Close();
+        }
+
+        private string getToken(string methodName)
+        {
+            string token = "";
+            try
+            {
+                conn.Open();
+                string sql_tok = "SELECT tokenValue FROM Token WHERE methodName='" + methodName + "';";
+                MySqlCommand cmd_tok = new MySqlCommand(sql_tok, conn);
+                MySqlDataReader rdr_tok = cmd_tok.ExecuteReader();
+                rdr_tok.Read();
+                token = rdr_tok[0].ToString();
+                rdr_tok.Close();
+            }
+            catch (Exception ex)
+            { }
+
+            conn.Close();
+            return token;
         }
     }
 }
