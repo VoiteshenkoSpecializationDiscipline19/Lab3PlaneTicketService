@@ -203,6 +203,7 @@ namespace WcfPlaneTicketService
                         string routeId = "", routeTime = "", routePrice = "";
 
                         rdr.Read();
+                        string oldRouteId = route.routeId;    
 
                         routeId = rdr[0].ToString();
                         routeTime = rdr[1].ToString();
@@ -210,7 +211,8 @@ namespace WcfPlaneTicketService
                         rdr.Close();
 
                         sql = "UPDATE UserFlight SET userFlightRouteId='" +
-                            routeId + "' WHERE userFlightUserId='" + userId + "';";
+                            routeId + "' WHERE userFlightUserId='" + userId
+                            + "' AND userFlightRouteId='" + oldRouteId + "';";
 
                         cmd = new MySqlCommand(sql, conn);
                         cmd.ExecuteNonQuery();
