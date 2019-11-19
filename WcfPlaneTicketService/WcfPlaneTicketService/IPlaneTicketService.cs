@@ -26,7 +26,15 @@ namespace WcfPlaneTicketService
             UriTemplate = "/flights/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]       
-        List<Route> getFullUserFlightsInfo(string userId, string tokenValue); // with time and price      
+        List<Route> getFullUserFlightsInfo(string userId, string tokenValue);
+
+        [OperationContract]
+        [WebInvoke(
+            Method = "GET",
+            UriTemplate = "/flights/{tokenValue}",
+            RequestFormat = WebMessageFormat.Json,
+            ResponseFormat = WebMessageFormat.Json)]
+        List<Route> getFlightsInfo(string tokenValue);
 
         [OperationContract]  
         [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/{tokenValue}",
@@ -41,7 +49,7 @@ namespace WcfPlaneTicketService
         Route updateFlight(string userId,  Route route, string tokenValue);
 
         [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}/{tokenValue}",
+        [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
         int deleteFlight(string userId, string routeId, string tokenValue);

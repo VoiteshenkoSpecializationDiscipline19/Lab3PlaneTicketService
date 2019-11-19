@@ -51,7 +51,7 @@ namespace WcfPlaneTicketService
         {
             List<Route> resRoutes = new List<Route>();
 
-            string methodName = "getUser";
+            string methodName = "getFullUserFlightsInfo";
             string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
@@ -100,10 +100,52 @@ namespace WcfPlaneTicketService
             return resRoutes;
         }
 
+        public List<Route> getFlightsInfo(string tokenValue)
+        {
+            List<Route> resRoutes = new List<Route>();
+
+            string methodName = "getFlightsInfo";
+            string tokVal = getToken(methodName);
+
+            if (tokVal.Equals(tokenValue))
+            {
+                try
+                {
+                    conn.Open();
+
+                    
+                        string sql = "SELECT * FROM Route;";
+                        MySqlCommand cmd = new MySqlCommand(sql, conn);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+
+                    Route rt = new Route();
+
+                        while (rdr.Read())
+                        {
+                            rt.routeId = rdr[0].ToString();
+                            rt.routeFrom = rdr[1].ToString();
+                            rt.routeWhere = rdr[2].ToString();
+                            rt.routeDate = rdr[3].ToString();
+                            rt.routeTime = rdr[4].ToString();
+                            rt.routePrice = rdr[5].ToString();
+
+                        }
+                        rdr.Close();
+                    resRoutes.Add(rt);
+
+                }
+                catch (Exception ex)
+                { }
+
+                conn.Close();
+            }
+            return resRoutes;
+        }
+
         public Route addFlight(string userId, Route route, string tokenValue)
         {
 
-            string methodName = "getUser";
+            string methodName = "addFlight";
             string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
@@ -150,7 +192,7 @@ namespace WcfPlaneTicketService
         public Route updateFlight(string userId, Route route, string tokenValue)
         {
 
-            string methodName = "getUser";
+            string methodName = "updateFlight";
             string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
@@ -200,7 +242,7 @@ namespace WcfPlaneTicketService
             //string tokVal = tokens["deleteFlight"].tokenValue;
             //string tokVal = "token1234";
 
-            string methodName = "getUser";
+            string methodName = "deleteFlight";
             string tokVal = getToken(methodName);
 
             if (tokVal.Equals(tokenValue))
