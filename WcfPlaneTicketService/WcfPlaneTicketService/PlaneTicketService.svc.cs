@@ -129,10 +129,9 @@ namespace WcfPlaneTicketService
                             rt.routeDate = rdr[3].ToString();
                             rt.routeTime = rdr[4].ToString();
                             rt.routePrice = rdr[5].ToString();
-
-                        }
-                        rdr.Close();
-                    resRoutes.Add(rt);
+                            resRoutes.Add(rt);
+                    }
+                    rdr.Close();
 
                 }
                 catch (Exception ex)
