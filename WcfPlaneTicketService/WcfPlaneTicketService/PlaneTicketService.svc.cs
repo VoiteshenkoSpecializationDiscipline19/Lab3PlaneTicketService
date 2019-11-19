@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -312,8 +313,9 @@ namespace WcfPlaneTicketService
                 DateTime currentDate = DateTime.Now;
                 string dateString = currentDate.ToString("d");
                 currentDate = Convert.ToDateTime(dateString);
-                DateTime dateFromDate = Convert.ToDateTime(dateFrom);
-                DateTime dateToDate = Convert.ToDateTime(dateTo);
+
+                DateTime dateFromDate = DateTime.ParseExact(dateFrom, "dd.MM.yyyy", CultureInfo.InvariantCulture);
+                DateTime dateToDate = DateTime.ParseExact(dateTo, "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
                 if (currentDate >= dateFromDate && currentDate <= dateToDate)
                     token = rdr_tok[0].ToString();
@@ -321,7 +323,9 @@ namespace WcfPlaneTicketService
                 rdr_tok.Close();
             }
             catch (Exception ex)
-            { }
+            {
+                Console.WriteLine(ex.ToString());
+            }
 
             conn.Close();
             return token;
