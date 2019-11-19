@@ -43,7 +43,7 @@ namespace WcfPlaneTicketService
 
                 conn.Close();
             }
-            
+
 
             return user;
         }
@@ -114,15 +114,14 @@ namespace WcfPlaneTicketService
                 {
                     conn.Open();
 
-                    
+
                         string sql = "SELECT * FROM Route;";
                         MySqlCommand cmd = new MySqlCommand(sql, conn);
                         MySqlDataReader rdr = cmd.ExecuteReader();
 
-                    Route rt = new Route();
-
                         while (rdr.Read())
                         {
+                            Route rt = new Route();
                             rt.routeId = rdr[0].ToString();
                             rt.routeFrom = rdr[1].ToString();
                             rt.routeWhere = rdr[2].ToString();
@@ -300,15 +299,15 @@ namespace WcfPlaneTicketService
                 string sql_tok = "";
                 MySqlCommand cmd_tok;
                 MySqlDataReader rdr_tok;
-             
+
                 sql_tok = "SELECT tokenValue, dateFrom, dateTo FROM Token WHERE methodName='" + methodName + "';";
                 cmd_tok = new MySqlCommand(sql_tok, conn);
                 rdr_tok = cmd_tok.ExecuteReader();
                 rdr_tok.Read();
-                
+
                 dateFrom = rdr_tok[1].ToString();
                 dateTo = rdr_tok[2].ToString();
-                
+
                 DateTime currentDate = DateTime.Now;
                 string dateString = currentDate.ToString("d");
                 currentDate = Convert.ToDateTime(dateString);
