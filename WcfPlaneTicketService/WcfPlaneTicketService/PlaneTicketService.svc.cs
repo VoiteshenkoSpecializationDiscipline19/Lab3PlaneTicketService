@@ -1,10 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.ServiceModel;
-using System.Text;
 
 namespace WcfPlaneTicketService
 {
@@ -118,10 +114,9 @@ namespace WcfPlaneTicketService
                         MySqlCommand cmd = new MySqlCommand(sql, conn);
                         MySqlDataReader rdr = cmd.ExecuteReader();
 
-                    Route rt = new Route();
-
                         while (rdr.Read())
                         {
+                            Route rt = new Route();
                             rt.routeId = rdr[0].ToString();
                             rt.routeFrom = rdr[1].ToString();
                             rt.routeWhere = rdr[2].ToString();
