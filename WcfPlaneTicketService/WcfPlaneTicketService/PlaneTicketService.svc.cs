@@ -6,8 +6,8 @@ namespace WcfPlaneTicketService
 {
     public class PlaneTicketService : IPlaneTicketService
     {
-        private static string connStr = "server=remotemysql.com;Port=3306;Database=onWm52J7I5;Uid=onWm52J7I5;Pwd=TWgylKHgPf";
-        private static MySqlConnection conn = new MySqlConnection(connStr);
+        private const string connStr = "server=remotemysql.com;Port=3306;Database=onWm52J7I5;Uid=onWm52J7I5;Pwd=TWgylKHgPf";
+        private MySqlConnection conn = new MySqlConnection(connStr);
 
         public User getUser(string userId, string tokenValue)
         {
@@ -260,7 +260,7 @@ namespace WcfPlaneTicketService
             return successCode;
         }
 
-        public void setToken(string method, Token token)
+        public void setToken(string methodName, Token token)
         {
             try
             {
@@ -285,7 +285,7 @@ namespace WcfPlaneTicketService
             conn.Close();
         }
 
-        private static string getToken(string methodName)
+        private string getToken(string methodName)
         {
             string token = "", dateFrom = "", dateTo = "";
             try
