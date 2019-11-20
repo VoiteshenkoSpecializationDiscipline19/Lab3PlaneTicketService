@@ -266,16 +266,16 @@ namespace WcfPlaneTicketService
             {
                 conn.Open();
                 string sql = "UPDATE Token SET tokenValue='" +
-                            token.token + "' WHERE methodName='" + method + "';";
+                            token.token + "' WHERE methodName='" + methodName + "';";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
 
                 sql = "UPDATE Token SET dateFrom='" +
-                            token.date_from + "' WHERE methodName='" + method + "';";
+                            token.date_from + "' WHERE methodName='" + methodName + "';";
                 cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
                 sql = "UPDATE Token SET dateTo='" +
-                            token.date_to + "' WHERE methodName='" + method + "';";
+                            token.date_to + "' WHERE methodName='" + methodName + "';";
                 cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
             }
