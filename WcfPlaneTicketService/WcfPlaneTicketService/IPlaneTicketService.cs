@@ -4,28 +4,20 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Web;
-
+using System.Threading.Tasks;
 
 namespace WcfPlaneTicketService
 {
     [ServiceContract]
     public interface IPlaneTicketService
-    {
-        [OperationContract]
-        [WebInvoke(
-            Method = "GET",
-            UriTemplate = "/{userId}/{tokenValue}",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        User getUser(string userId, string tokenValue); // userId = Email
-
+    { 
         [OperationContract]  
         [WebInvoke(
             Method = "GET",
             UriTemplate = "/flights/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]       
-        List<Route> getFullUserFlightsInfo(string userId, string tokenValue);
+        Task<List<Route>> getFullUserFlightsInfo(string userId, string tokenValue);
 
         [OperationContract]
         [WebInvoke(
@@ -33,31 +25,25 @@ namespace WcfPlaneTicketService
             UriTemplate = "/flights/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        List<Route> getFlightsInfo(string tokenValue);
+        Task<List<Route>> getFlightsInfoAsync(string tokenValue);
 
         [OperationContract]  
         [WebInvoke(Method = "POST", UriTemplate = "/addFlight/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Route addFlight(string userId, Route route, string tokenValue);
+        Task<Route> addFlightAsync(string userId, Route route, string tokenValue);
 
         [OperationContract] 
         [WebInvoke(Method = "POST", UriTemplate = "/updateFlight/{userId}/{tokenValue}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        Route updateFlight(string userId,  Route route, string tokenValue);
+        Task<Route> updateFlightAsync(string userId,  Route route, string tokenValue);
 
         [OperationContract]
         [WebInvoke(Method = "POST", UriTemplate = "/deleteFlight/{userId}/{routeId}",
             RequestFormat = WebMessageFormat.Json,
             ResponseFormat = WebMessageFormat.Json)]
-        int deleteFlight(string userId, string routeId, string tokenValue);
-
-        [OperationContract]
-        [WebInvoke(Method = "POST", UriTemplate = "/setToken/{methodName}",
-            RequestFormat = WebMessageFormat.Json,
-            ResponseFormat = WebMessageFormat.Json)]
-        void setToken(string methodName, Token token);
+        Task<int> deleteFlightAsync(string userId, string routeId, string tokenValue);
     }
 
     [DataContract]
@@ -86,25 +72,5 @@ namespace WcfPlaneTicketService
         public string routeTime { get; set; }
         [DataMember]
         public string routePrice { get; set; }
-    }
-
-    [DataContract]
-    public class UserFlight
-    {
-        [DataMember]
-        public string userFlightRouteId { get; set; }
-        [DataMember]
-        public string userFlightUserId { get; set; }
-    }
-
-    [DataContract]
-    public class User
-    {
-        [DataMember]
-        public string userId { get; set; }   // Email = Id
-        [DataMember]
-        public string userFirstName { get; set; }
-        [DataMember]
-        public string userSecondName { get; set; }
     }
 }

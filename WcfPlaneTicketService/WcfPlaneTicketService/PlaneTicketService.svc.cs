@@ -1,54 +1,26 @@
 ﻿using MySql.Data.MySqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace WcfPlaneTicketService
 {
     public class PlaneTicketService : IPlaneTicketService
     {
-        private const string connStr = "server=remotemysql.com;Port=3306;Database=onWm52J7I5;Uid=onWm52J7I5;Pwd=TWgylKHgPf";
-        private MySqlConnection conn = new MySqlConnection(connStr);
+        private MySqlConnection conn = new MySqlConnection(ConfigurationManager.AppSettings["dbConnectionString"]);
+        private readonly string paymentServiceUri = ConfigurationManager.AppSettings["paymentUri"];
+        private HttpClient client = new HttpClient();
 
-        public User getUser(string userId, string tokenValue)
-        {
-            User user = new User();
-
-            string methodName = "getUser";
-            string tokVal = getToken(methodName);
-
-            if (tokVal.Equals(tokenValue))
-            {
-                try
-                {
-                        conn.Open();
-
-                        string sql = "SELECT * FROM User WHERE userId='" + userId + "';";
-                        MySqlCommand cmd = new MySqlCommand(sql, conn);
-                        MySqlDataReader rdr = cmd.ExecuteReader();
-                        rdr.Read();
-
-                        user.userId = rdr[0].ToString();
-                        user.userFirstName = rdr[1].ToString();
-                        user.userSecondName = rdr[2].ToString();
-
-                        rdr.Close();
-                }
-                catch (Exception ex)
-                { }
-
-                conn.Close();
-            }
-            
-
-            return user;
-        }
-
-        public List<Route> getFullUserFlightsInfo(string userId, string tokenValue)
+        public async Task<List<Route>> getFullUserFlightsInfo(string userId, string tokenValue)
         {
             List<Route> resRoutes = new List<Route>();
 
             string methodName = "getFullUserFlightsInfo";
-            string tokVal = getToken(methodName);
+            string response = await client.GetStringAsync(new Uri(paymentServiceUri + methodName));
+            string tokVal = JsonConvert.DeserializeObject<string>(response);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -88,20 +60,20 @@ namespace WcfPlaneTicketService
 
 
                     }
-                    catch (Exception ex)
-                    { }
+                    catch (Exception) { }
 
                     conn.Close();
                 }
             return resRoutes;
         }
 
-        public List<Route> getFlightsInfo(string tokenValue)
+        public async Task<List<Route>> getFlightsInfoAsync(string tokenValue)
         {
             List<Route> resRoutes = new List<Route>();
 
             string methodName = "getFlightsInfo";
-            string tokVal = getToken(methodName);
+            string response = await client.GetStringAsync(new Uri(paymentServiceUri + methodName));
+            string tokVal = JsonConvert.DeserializeObject<string>(response);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -128,19 +100,19 @@ namespace WcfPlaneTicketService
                     rdr.Close();
 
                 }
-                catch (Exception ex)
-                { }
+                catch (Exception){ }
 
                 conn.Close();
             }
             return resRoutes;
         }
 
-        public Route addFlight(string userId, Route route, string tokenValue)
+        public async Task<Route> addFlightAsync(string userId, Route route, string tokenValue)
         {
 
             string methodName = "addFlight";
-            string tokVal = getToken(methodName);
+            string response = await client.GetStringAsync(new Uri(paymentServiceUri + methodName));
+            string tokVal = JsonConvert.DeserializeObject<string>(response);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -174,8 +146,7 @@ namespace WcfPlaneTicketService
                         route.routePrice = routePrice;
 
                     }
-                    catch (Exception ex)
-                    { }
+                    catch (Exception){ }
 
                     conn.Close();
                 }
@@ -183,11 +154,12 @@ namespace WcfPlaneTicketService
             return route;
         }
 
-        public Route updateFlight(string userId, Route route, string tokenValue)
+        public async Task<Route> updateFlightAsync(string userId, Route route, string tokenValue)
         {
 
             string methodName = "updateFlight";
-            string tokVal = getToken(methodName);
+            string response = await client.GetStringAsync(new Uri(paymentServiceUri + methodName));
+            string tokVal = JsonConvert.DeserializeObject<string>(response);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -222,8 +194,7 @@ namespace WcfPlaneTicketService
                         route.routePrice = routePrice;
 
                     }
-                    catch (Exception ex)
-                    { }
+                    catch (Exception){ }
 
 
                     conn.Close();
@@ -232,12 +203,13 @@ namespace WcfPlaneTicketService
             return route;
         }
 
-        public int deleteFlight(string userId, string routeId, string tokenValue)
+        public async Task<int> deleteFlightAsync(string userId, string routeId, string tokenValue)
         {
             int successCode = -1;
 
             string methodName = "deleteFlight";
-            string tokVal = getToken(methodName);
+            string response = await client.GetStringAsync(new Uri(paymentServiceUri + methodName));
+            string tokVal = JsonConvert.DeserializeObject<string>(response);
 
             if (tokVal.Equals(tokenValue))
             {
@@ -250,75 +222,13 @@ namespace WcfPlaneTicketService
                         MySqlCommand cmd = new MySqlCommand(sql, conn);
                         cmd.ExecuteNonQuery();
                 }
-                catch (Exception ex)
-                { }
+                catch (Exception){ }
 
                 conn.Close();
                 successCode = 0;
             }
 
             return successCode;
-        }
-
-        public void setToken(string methodName, Token token)
-        {
-            try
-            {
-                conn.Open();
-                string sql = "UPDATE Token SET tokenValue='" +
-                            token.token + "' WHERE methodName='" + methodName + "';";
-                MySqlCommand cmd = new MySqlCommand(sql, conn);
-                cmd.ExecuteNonQuery();
-
-                sql = "UPDATE Token SET dateFrom='" +
-                            token.date_from + "' WHERE methodName='" + methodName + "';";
-                cmd = new MySqlCommand(sql, conn);
-                cmd.ExecuteNonQuery();
-                sql = "UPDATE Token SET dateTo='" +
-                            token.date_to + "' WHERE methodName='" + methodName + "';";
-                cmd = new MySqlCommand(sql, conn);
-                cmd.ExecuteNonQuery();
-            }
-            catch (Exception ex)
-            { }
-
-            conn.Close();
-        }
-
-        private string getToken(string methodName)
-        {
-            string token = "", dateFrom = "", dateTo = "";
-            try
-            {
-                conn.Open();
-                string sql_tok = "";
-                MySqlCommand cmd_tok;
-                MySqlDataReader rdr_tok;
-             
-                sql_tok = "SELECT tokenValue, dateFrom, dateTo FROM Token WHERE methodName='" + methodName + "';";
-                cmd_tok = new MySqlCommand(sql_tok, conn);
-                rdr_tok = cmd_tok.ExecuteReader();
-                rdr_tok.Read();
-                
-                dateFrom = rdr_tok[1].ToString();
-                dateTo = rdr_tok[2].ToString();
-                
-                DateTime currentDate = DateTime.Now;
-                string dateString = currentDate.ToString("d");
-                currentDate = Convert.ToDateTime(dateString);
-                DateTime dateFromDate = Convert.ToDateTime(dateFrom);
-                DateTime dateToDate = Convert.ToDateTime(dateTo);
-
-                if (currentDate >= dateFromDate && currentDate <= dateToDate)
-                    token = rdr_tok[0].ToString();
-
-                rdr_tok.Close();
-            }
-            catch (Exception ex)
-            { }
-
-            conn.Close();
-            return token;
         }
     }
 }
