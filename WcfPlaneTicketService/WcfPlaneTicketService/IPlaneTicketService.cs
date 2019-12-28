@@ -47,17 +47,6 @@ namespace WcfPlaneTicketService
     }
 
     [DataContract]
-    public class Token
-    {
-        [DataMember]
-        public string token { get; set; }
-        [DataMember]
-        public string date_from { get; set; }
-        [DataMember]
-        public string date_to { get; set; }
-    }
-
-    [DataContract]
     public class Route
     {
         [DataMember]
