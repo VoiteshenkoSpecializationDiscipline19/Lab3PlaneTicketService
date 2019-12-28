@@ -235,8 +235,6 @@ namespace WcfPlaneTicketService
         public int deleteFlight(string userId, string routeId, string tokenValue)
         {
             int successCode = -1;
-            //string tokVal = tokens["deleteFlight"].tokenValue;
-            //string tokVal = "token1234";
 
             string methodName = "deleteFlight";
             string tokVal = getToken(methodName);
@@ -262,22 +260,22 @@ namespace WcfPlaneTicketService
             return successCode;
         }
 
-        public void setToken(string method, Token token)
+        public void setToken(string methodName, Token token)
         {
             try
             {
                 conn.Open();
                 string sql = "UPDATE Token SET tokenValue='" +
-                            token.tokenValue + "' WHERE methodName='" + method + "';";
+                            token.token + "' WHERE methodName='" + methodName + "';";
                 MySqlCommand cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
 
                 sql = "UPDATE Token SET dateFrom='" +
-                            token.date_from + "' WHERE methodName='" + method + "';";
+                            token.date_from + "' WHERE methodName='" + methodName + "';";
                 cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
                 sql = "UPDATE Token SET dateTo='" +
-                            token.date_to + "' WHERE methodName='" + method + "';";
+                            token.date_to + "' WHERE methodName='" + methodName + "';";
                 cmd = new MySqlCommand(sql, conn);
                 cmd.ExecuteNonQuery();
             }
