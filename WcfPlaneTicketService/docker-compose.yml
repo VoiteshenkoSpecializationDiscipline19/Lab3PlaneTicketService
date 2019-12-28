@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  wcfplaneticketservice:
+    image: wcfplaneticketservice
+    build:
+      context: .\WcfPlaneTicketService
+      dockerfile: Dockerfile

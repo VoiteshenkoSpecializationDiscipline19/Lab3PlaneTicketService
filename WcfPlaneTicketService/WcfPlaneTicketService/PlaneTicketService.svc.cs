@@ -215,7 +215,7 @@ namespace WcfPlaneTicketService
                             + "' AND userFlightRouteId='" + oldRouteId + "';";
 
                         cmd = new MySqlCommand(sql, conn);
-                        cmd.ExecuteNonQuery();
+                        int c = cmd.ExecuteNonQuery();
 
                         route.routeId = routeId;
                         route.routeTime = routeTime;
