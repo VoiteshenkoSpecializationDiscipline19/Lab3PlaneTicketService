@@ -1,0 +1,5 @@
+﻿<%@ ServiceHost Language="C#"Debug="true"
+        Service="WcfPlaneTicketService.PlaneTicketService"
+        CodeBehind="PlaneTicketService.svc.cs"
+        Factory="Castle.Facilities.WcfIntegration.DefaultServiceHostFactory, Castle.Facilities.WcfIntegration"
+    %>
